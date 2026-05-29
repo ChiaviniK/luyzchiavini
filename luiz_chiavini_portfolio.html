@@ -1,0 +1,429 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --blue:#3b82f6;--blue-dark:#1d4ed8;--blue-glow:#60a5fa;
+  --purple:#8b5cf6;--purple-dark:#6d28d9;--purple-glow:#a78bfa;
+  --green:#10b981;--green-dark:#059669;--green-glow:#34d399;
+  --bg:#050a14;--bg2:#0a1120;--bg3:#0f1a2e;
+  --text:#e2e8f0;--muted:#64748b;--card:#0d1829;
+  --border:rgba(59,130,246,0.15);
+}
+
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden}
+
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.35;pointer-events:none}
+
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);background:rgba(5,10,20,0.8);border-bottom:1px solid var(--border);padding:14px 0}
+.nav-inner{max-width:960px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--green);letter-spacing:0.05em}
+.logo span{color:var(--muted)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:var(--blue-glow)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 60px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:100px;padding:6px 14px;margin-bottom:28px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+
+.hero-name{font-size:clamp(40px,7vw,80px);font-weight:800;line-height:1.05;margin-bottom:8px;letter-spacing:-0.02em}
+.hero-name .first{color:#e2e8f0}
+.hero-name .last{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-role{font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--blue-glow);margin-bottom:20px}
+.hero-role::before{content:'> ';color:var(--green)}
+.hero-desc{font-size:16px;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:36px}
+
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:8px;color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s,transform 0.2s;text-decoration:none}
+.btn-primary:hover{opacity:0.85;transform:translateY(-1px)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:border-color 0.2s,color 0.2s;text-decoration:none}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue-glow)}
+
+.hero-stats{display:flex;gap:32px;margin-top:52px;padding-top:32px;border-top:1px solid var(--border)}
+.stat-num{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--blue-glow),var(--purple-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px}
+
+/* SECTION */
+section{padding:80px 0}
+.section-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-size:clamp(26px,4vw,40px);font-weight:800;margin-bottom:40px;line-height:1.15}
+.section-title span{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.about-text p{font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:16px}
+.about-text p strong{color:var(--text)}
+.info-list{list-style:none}
+.info-list li{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);padding:10px 0;border-bottom:1px solid var(--border)}
+.info-list li:last-child{border-bottom:none}
+.info-list .key{color:var(--blue-glow);min-width:80px}
+.info-list .val{color:var(--text)}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.skill-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;transition:border-color 0.2s,transform 0.2s}
+.skill-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.skill-cat{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple-glow);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:4px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);color:var(--blue-glow)}
+.tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.15);color:var(--green-glow)}
+.tag.purple{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.15);color:var(--purple-glow)}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border-color 0.2s,transform 0.2s;cursor:pointer;text-decoration:none;display:block}
+.project-card:hover{border-color:var(--blue);transform:translateY(-3px)}
+.proj-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.proj-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:16px}
+.proj-lang{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:3px 8px;border-radius:4px}
+.proj-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+.proj-desc{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.6}
+.proj-footer{display:flex;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.proj-stat{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.proj-stat i{color:var(--green)}
+
+/* EXPERIENCE */
+.exp-list{display:flex;flex-direction:column;gap:0}
+.exp-item{display:grid;grid-template-columns:140px 1fr;gap:24px;padding:28px 0;border-bottom:1px solid var(--border)}
+.exp-item:last-child{border-bottom:none}
+.exp-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding-top:3px}
+.exp-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px}
+.exp-dot.active{background:var(--green)}
+.exp-dot.past{background:var(--muted)}
+.exp-role{font-size:16px;font-weight:700;margin-bottom:4px}
+.exp-company{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue-glow);margin-bottom:10px}
+.exp-desc{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* CONTACT */
+.contact-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:48px;text-align:center}
+.contact-title{font-size:32px;font-weight:800;margin-bottom:12px}
+.contact-sub{font-size:15px;color:var(--muted);margin-bottom:32px}
+.contact-links{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.contact-link{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:12px;transition:border-color 0.2s,color 0.2s}
+.contact-link:hover{border-color:var(--blue);color:var(--blue-glow)}
+.contact-link i{font-size:16px}
+
+/* FOOTER */
+footer{padding:24px 0;border-top:1px solid var(--border);text-align:center}
+footer p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+footer span{color:var(--green)}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+@media(max-width:640px){
+  .about-grid{grid-template-columns:1fr}
+  .hero-stats{gap:20px}
+  .exp-item{grid-template-columns:1fr;gap:4px}
+  .contact-box{padding:28px 20px}
+}
+</style>
+
+<canvas id="grid"></canvas>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span>//</span> chiavini.dev</div>
+    <div class="nav-links">
+      <a href="#sobre">sobre</a>
+      <a href="#skills">skills</a>
+      <a href="#projetos">projetos</a>
+      <a href="#contato">contato</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <!-- HERO -->
+  <section class="hero reveal" id="home">
+    <div class="hero-badge"><span class="dot"></span> disponível para projetos</div>
+    <div class="hero-name">
+      <div class="first">Luiz</div>
+      <div class="last">Chiavini</div>
+    </div>
+    <div class="hero-role">Cientista de Dados &amp; Cloud Engineer</div>
+    <p class="hero-desc">Transformo dados em decisões estratégicas. Especialista em computação em nuvem, análise de dados e inteligência artificial — com experiência em ensino técnico.</p>
+    <div class="hero-ctas">
+      <a href="#projetos" class="btn-primary"><i class="ti ti-code" aria-hidden="true"></i> Ver projetos</a>
+      <a href="#contato" class="btn-ghost"><i class="ti ti-send" aria-hidden="true"></i> Entrar em contato</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">71+</div><div class="stat-label">repositórios</div></div>
+      <div><div class="stat-num">5+</div><div class="stat-label">anos exp.</div></div>
+      <div><div class="stat-num">Cloud</div><div class="stat-label">expertise</div></div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre" class="reveal">
+    <div class="section-tag"># sobre_mim</div>
+    <div class="section-title">Quem sou <span>eu</span></div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>Olá! Sou <strong>Luiz Claudio Chiavini Junior</strong>, Cientista de Dados e instrutor técnico apaixonado por transformar dados brutos em insights que movem negócios.</p>
+        <p>Com formação sólida na <strong>UFSCar</strong> e experiência combinando análise avançada de dados com <strong>computação em nuvem</strong>, atuo também como instrutor no <strong>UniMax — Centro Universitário Max Planck</strong>, ajudando a formar a próxima geração de profissionais tech.</p>
+        <p>Acredito que bons dados bem interpretados são a base de qualquer decisão inteligente.</p>
+      </div>
+      <ul class="info-list">
+        <li><span class="key">localização</span><span class="val">Iguape, SP — Brasil</span></li>
+        <li><span class="key">formação</span><span class="val">UFSCar</span></li>
+        <li><span class="key">cargo atual</span><span class="val">Instrutor — UniMax</span></li>
+        <li><span class="key">github</span><span class="val">@ChiaviniK</span></li>
+        <li><span class="key">foco</span><span class="val">Data Science · Cloud · IA</span></li>
+        <li><span class="key">status</span><span class="val" style="color:var(--green)">● disponível</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="reveal">
+    <div class="section-tag"># stack_técnica</div>
+    <div class="section-title">Habilidades &amp; <span>Tecnologias</span></div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-cat">linguagens</div>
+        <div class="skill-tags">
+          <span class="tag">Python</span>
+          <span class="tag">SQL</span>
+          <span class="tag">R</span>
+          <span class="tag">Bash</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">dados &amp; BI</div>
+        <div class="skill-tags">
+          <span class="tag green">Power BI</span>
+          <span class="tag green">Excel</span>
+          <span class="tag green">Pandas</span>
+          <span class="tag green">NumPy</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">cloud &amp; infra</div>
+        <div class="skill-tags">
+          <span class="tag purple">AWS</span>
+          <span class="tag purple">Azure</span>
+          <span class="tag purple">GCP</span>
+          <span class="tag purple">Docker</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">machine learning</div>
+        <div class="skill-tags">
+          <span class="tag">Scikit-learn</span>
+          <span class="tag">TensorFlow</span>
+          <span class="tag green">IA Generativa</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">banco de dados</div>
+        <div class="skill-tags">
+          <span class="tag purple">PostgreSQL</span>
+          <span class="tag purple">MySQL</span>
+          <span class="tag purple">MongoDB</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">soft skills</div>
+        <div class="skill-tags">
+          <span class="tag green">Ensino técnico</span>
+          <span class="tag green">Liderança</span>
+          <span class="tag green">Comunicação</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJETOS -->
+  <section id="projetos" class="reveal">
+    <div class="section-tag"># projetos</div>
+    <div class="section-title">Trabalhos em <span>destaque</span></div>
+    <div class="projects-grid">
+      <a class="project-card" href="https://github.com/ChiaviniK" target="_blank">
+        <div class="proj-header">
+          <div class="proj-icon">📊</div>
+          <span class="proj-lang">Python</span>
+        </div>
+        <div class="proj-name">Data Analysis Dashboard</div>
+        <div class="proj-desc">// Análise exploratória e visualização de dados com Python, Pandas e Matplotlib</div>
+        <div class="proj-footer">
+          <span class="proj-stat"><i class="ti ti-git-fork" aria-hidden="true"></i> fork</span>
+          <span class="proj-stat"><i class="ti ti-star" aria-hidden="true"></i> star</span>
+        </div>
+      </a>
+      <a class="project-card" href="https://github.com/ChiaviniK" target="_blank">
+        <div class="proj-header">
+          <div class="proj-icon" style="background:linear-gradient(135deg,var(--green),var(--blue))">☁️</div>
+          <span class="proj-lang">Cloud</span>
+        </div>
+        <div class="proj-name">Cloud Architecture Demo</div>
+        <div class="proj-desc">// Infraestrutura escalável em nuvem com arquitetura serverless e pipelines automatizados</div>
+        <div class="proj-footer">
+          <span class="proj-stat"><i class="ti ti-git-fork" aria-hidden="true"></i> fork</span>
+          <span class="proj-stat"><i class="ti ti-star" aria-hidden="true"></i> star</span>
+        </div>
+      </a>
+      <a class="project-card" href="https://github.com/ChiaviniK" target="_blank">
+        <div class="proj-header">
+          <div class="proj-icon" style="background:linear-gradient(135deg,var(--purple),var(--blue))">🤖</div>
+          <span class="proj-lang">ML</span>
+        </div>
+        <div class="proj-name">ML Bootcamp Projects</div>
+        <div class="proj-desc">// Projetos práticos de Machine Learning desenvolvidos durante bootcamps — classificação, regressão e clustering</div>
+        <div class="proj-footer">
+          <span class="proj-stat"><i class="ti ti-git-fork" aria-hidden="true"></i> fork</span>
+          <span class="proj-stat"><i class="ti ti-star" aria-hidden="true"></i> star</span>
+        </div>
+      </a>
+      <a class="project-card" href="https://github.com/ChiaviniK" target="_blank">
+        <div class="proj-header">
+          <div class="proj-icon" style="background:linear-gradient(135deg,var(--green-dark),var(--green))">📈</div>
+          <span class="proj-lang">SQL</span>
+        </div>
+        <div class="proj-name">Business Intelligence Reports</div>
+        <div class="proj-desc">// Relatórios e dashboards de BI com Power BI, SQL e integração com fontes de dados empresariais</div>
+        <div class="proj-footer">
+          <span class="proj-stat"><i class="ti ti-git-fork" aria-hidden="true"></i> fork</span>
+          <span class="proj-stat"><i class="ti ti-star" aria-hidden="true"></i> star</span>
+        </div>
+      </a>
+      <a class="project-card" href="https://github.com/ChiaviniK" target="_blank" style="border-color:rgba(139,92,246,0.25)">
+        <div class="proj-header">
+          <div class="proj-icon" style="background:linear-gradient(135deg,var(--purple),var(--purple-dark))">🎓</div>
+          <span class="proj-lang">Didático</span>
+        </div>
+        <div class="proj-name">Teaching Materials</div>
+        <div class="proj-desc">// Materiais de aula, exercícios e projetos práticos para formação técnica em dados e programação</div>
+        <div class="proj-footer">
+          <span class="proj-stat"><i class="ti ti-git-fork" aria-hidden="true"></i> fork</span>
+          <span class="proj-stat"><i class="ti ti-star" aria-hidden="true"></i> star</span>
+        </div>
+      </a>
+      <a class="project-card" href="https://github.com/ChiaviniK" target="_blank">
+        <div class="proj-header">
+          <div class="proj-icon" style="background:linear-gradient(135deg,#0ea5e9,var(--blue))">🔗</div>
+          <span class="proj-lang">API</span>
+        </div>
+        <div class="proj-name">Ver todos os 71 repos →</div>
+        <div class="proj-desc">// Explore o portfólio completo no GitHub com mais de 70 projetos e experimentos</div>
+        <div class="proj-footer">
+          <span class="proj-stat" style="color:var(--blue-glow)"><i class="ti ti-external-link" aria-hidden="true"></i> github.com/ChiaviniK</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- EXPERIENCIA -->
+  <section id="experiencia" class="reveal">
+    <div class="section-tag"># trajetória</div>
+    <div class="section-title">Experiência <span>Profissional</span></div>
+    <div class="exp-list">
+      <div class="exp-item">
+        <div class="exp-date"><span class="exp-dot active"></span>2022 — atual</div>
+        <div>
+          <div class="exp-role">Instrutor Técnico em Dados</div>
+          <div class="exp-company">UniMax — Centro Universitário Max Planck</div>
+          <div class="exp-desc">Formação de profissionais nas áreas de análise de dados, computação em nuvem e inteligência artificial. Condução de bootcamps práticos com foco em Python, SQL, Power BI, IA e mercado de trabalho tech.</div>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-date"><span class="exp-dot past"></span>2020 — 2022</div>
+        <div>
+          <div class="exp-role">Cientista de Dados</div>
+          <div class="exp-company">Projetos &amp; Consultoria</div>
+          <div class="exp-desc">Desenvolvimento de soluções analíticas em ambientes de nuvem, criação de pipelines de dados, dashboards executivos e modelos preditivos aplicados a problemas reais de negócio.</div>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-date"><span class="exp-dot past"></span>formação</div>
+        <div>
+          <div class="exp-role">Graduação em Ciências</div>
+          <div class="exp-company">UFSCar — Universidade Federal de São Carlos</div>
+          <div class="exp-desc">Base acadêmica rigorosa em ciências exatas e computação, com ênfase em métodos quantitativos, estatística aplicada e desenvolvimento de software.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section id="contato" class="reveal">
+    <div class="section-tag"># contato</div>
+    <div class="contact-box">
+      <div class="contact-title">Vamos <span style="background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent">colaborar?</span></div>
+      <p class="contact-sub">Aberto a projetos de dados, cloud, consultoria e oportunidades de ensino técnico.</p>
+      <div class="contact-links">
+        <a class="contact-link" href="https://github.com/ChiaviniK" target="_blank"><i class="ti ti-brand-github" aria-hidden="true"></i> GitHub</a>
+        <a class="contact-link" href="https://www.linkedin.com/in/luizchiavini/" target="_blank"><i class="ti ti-brand-linkedin" aria-hidden="true"></i> LinkedIn</a>
+        <a class="contact-link" href="mailto:luiz@chiavini.dev"><i class="ti ti-mail" aria-hidden="true"></i> Email</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p>built with <span>♥</span> &amp; código · © 2026 Luiz Chiavini</p>
+</footer>
+
+<script>
+const canvas = document.getElementById('grid');
+const ctx = canvas.getContext('2d');
+let W, H, nodes = [], time = 0;
+const COLS = 18, ROWS = 12;
+
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  nodes = [];
+  const cw = W/COLS, ch = H/ROWS;
+  for(let r=0;r<=ROWS;r++) for(let c=0;c<=COLS;c++){
+    nodes.push({x:c*cw, y:r*ch, ox:c*cw, oy:r*ch,
+      phase:Math.random()*Math.PI*2, speed:0.3+Math.random()*0.4,
+      amp:4+Math.random()*8, r: r===0||r===ROWS||c===0||c===COLS?0:Math.random()>0.85?1:0});
+  }
+}
+resize();
+window.addEventListener('resize', resize);
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  time += 0.008;
+  const cols_1 = COLS+1;
+  nodes.forEach((n,i)=>{
+    n.x = n.ox + Math.sin(time*n.speed + n.phase)*n.amp;
+    n.y = n.oy + Math.cos(time*n.speed*0.7 + n.phase)*n.amp*0.6;
+  });
+  ctx.lineWidth = 0.5;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    const a = nodes[r*cols_1+c], b = nodes[r*cols_1+c+1];
+    const d = nodes[(r+1)*cols_1+c];
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle='rgba(59,130,246,0.18)'; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(d.x,d.y);
+    ctx.stroke();
+  }
+  nodes.forEach(n=>{
+    if(!n.r) return;
+    ctx.beginPath(); ctx.arc(n.x,n.y,2,0,Math.PI*2);
+    const grd = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,6);
+    grd.addColorStop(0,'rgba(139,92,246,0.9)');
+    grd.addColorStop(1,'rgba(139,92,246,0)');
+    ctx.fillStyle=grd; ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('visible')});
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
